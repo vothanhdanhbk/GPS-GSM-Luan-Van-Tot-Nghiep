@@ -71,7 +71,7 @@ function convertDeg(data) {
 
 //convert data to distant,speed,status
 function convertDataDetail(data) {
-  console.log('TCL: convertDataDetail -> data', data);
+  // console.log('TCL: convertDataDetail -> data', data);
   if (data.length > 0) {
     let timeStartConvert = new Date(data[0].hh);
     let hoursStartConvert = timeStartConvert.getHours();
@@ -119,9 +119,11 @@ function convertDataDetail(data) {
         timeEnd: '23:59',
       });
     }
-    console.log('TCL: convertDataDetail -> result', result);
+    // console.log('TCL: convertDataDetail -> result', result);
     // co status roi ; gio gom cac thong so lai khu vuc
-   let dataXuLyNhieu= xulynhieu(result)
+    let dataFinancialConvert = xulynhieu(result);
+    // console.log("TCL: convertDataDetail -> dataFinancialConvert", dataFinancialConvert)
+    return dataFinancialConvert;
   }
 }
 // xu ly nhieu
@@ -129,24 +131,44 @@ function xulynhieu(data) {
   // xu ly index
   let arrayValue = [];
   for (let i = 0; i <= data.length - 1; i++) {
-    let dataCover= coverXuLyNhieu(i, data, data[i].status);
-    console.log("TCL: xulynhieu -> dataCover", dataCover)
-    if(i <dataCover[1]) i=dataCover[1];
+    let dataCover = coverXuLyNhieu(i, data, data[i].status);
+    if (i < dataCover[1]) i = dataCover[1];
+    //  start  array group
+    let array = [];
+    for (let k = dataCover[0]; k <= dataCover[1]; k++) {
+      array.push(data[k]);
+    }
+    arrayValue.push(dataFinancialConvert(array, dataCover[2]));
+    //
   }
-  //  xu ly gia tri
+  return arrayValue;
 }
-// Gom mang
-
-
+//
+function dataFinancialConvert(data, status) {
+  let k = {};
+  if (status == 'Disconnected') {
+    k = {
+      status: 'Disconnected',
+      timeStart: data[0].timeStart,
+      timeEnd: data[data.length - 1].timeEnd,
+    };
+  } else {
+    k = {
+      detail: data,
+      status: status,
+    };
+  }
+  return k;
+}
 //  cover xu ly nhieu
 function coverXuLyNhieu(i, data, status) {
   let index = i,
     check = 0;
-  while(true){
-    index+=1;
+  while (true) {
+    index += 1;
     // console.log("TCL: coverXuLyNhieu -> index", index)
-    if(data[index].status =='Disconnected'&&status !='Disconnected'){
-      index+=2;
+    if (data[index].status == 'Disconnected' && status != 'Disconnected') {
+      index += 2;
       break;
     }
     if (data[index].status == status) {
@@ -158,51 +180,15 @@ function coverXuLyNhieu(i, data, status) {
     if (check > 2) {
       break;
     }
-    if( index == data.length - 1) {
-      index+=3;
+    if (index == data.length - 1) {
+      index += 3;
       break;
     }
   }
 
-    return [i, index - 3, status];
-
+  return [i, index - 3, status];
 }
 
-// function checkStatus(i, result, status) {
-//   let wakeHouse = [];
-//   let index = i;
-//   while (result[index].status == status) {
-//     wakeHouse.push(result[index]);
-//     // console.log("TCL: checkStatus -> result[index]", result[index])
-//     index += 1;
-//     console.log("TCL: checkStatus -> index", index)
-//     if (index == result.length) break;
-//   }
-
-//   //  nhom mang xong roi; gio xu ly
-//   if (status == 'Disconnected') {// xu ly cho Disconect
-//     if (wakeHouse.length == 1) {
-//       return [wakeHouse[0], index];
-//     } else {
-//       return [
-//         {
-//           status: 'Disconnected',
-//           timeStart: wakeHouse[0].timeStart,
-//           timeEnd: wakeHouse[wakeHouse.length - 1].timeEnd,
-//         },
-//         index,
-//       ];
-//     }
-//   }else{// xu ly cho Run v Stop
-//     return [
-//       {
-//         location:wakeHouse,
-//         status:status
-//       },
-//       index
-//     ]
-//   }
-// }
 // xu ly cuoi ngay
 function checkTimeNow(stamps) {
   let nowTime = new Date();
@@ -230,5 +216,70 @@ function getDistant(lat2, lon2, lat1, lon1) {
 
   return 12742000 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
+// convert Data To detail
+function convertDataToTimeList(data) {
+  let result = [];
+  for (let i in data) {
+    if ((data[i].status == 'Disconnected')) {
+      if (data[i].timeStart == '00:00') {
+        result.push({
+          time:"00:00",
+          title:'Mất kế nối',
+          circleColor: '#e32e2b',
+          lineColor: '#e32e2b',
+        });
+      }else if(data[i].timeEnd == "23:59"){
+        result.push({
+          time:convertHours(data[i].timeStart),
+          title:'Mất kế nối',
+          circleColor: '#e32e2b',
+          lineColor: '#e32e2b',
+        });
+        result.push({
+          time:"23:59",
+          title:'',
+          circleColor: '#e32e2b',
+          lineColor: "while",
+        });
+      }else{
+        result.push({
+          time:convertHours(data[i].timeStart),
+          title:'Mất kế nối',
+          circleColor: '#e32e2b',
+          lineColor: '#e32e2b',
+        });
+      }
+      
+    }else{
+      if(data[i].status=="Stop"){
+        result.push({
+          time:convertHours(data[i].detail[0].hh),
+          title:'Dừng',
+          circleColor: '#e6c949',
+          lineColor: '#e6c949',
+        });
+      }else{
+        result.push({
+          time:convertHours(data[i].detail[0].hh),
+          title:'Đang di chuyển',
+          circleColor: '#66e359',
+          lineColor: '#66e359',
+        });
+      }
+    }
+  }
+  console.log("TCL: convertDataToTimeList -> result", result)
+  return result
+}
+// covert hours
+function convertHours(stamp){
+   let k=new Date(stamp);
+   let time="";
+   if(k.getHours()<10) time+="0";
+   time+=k.getHours()+":";
+   if(k.getMinutes()<10) time+="0";
+   time+=k.getMinutes()+"";
+   return time
+}
 
-export {dataConvertFromServer, convertDataDetail};
+export {dataConvertFromServer, convertDataDetail, convertDataToTimeList};

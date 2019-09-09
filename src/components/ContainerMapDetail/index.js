@@ -19,11 +19,11 @@ export default class ContainerMapDetail extends Component {
   }
   render() {
     let {dayDetail}=this.props;
-    convertDataDetail(dayDetail)
+    let data =convertDataDetail(dayDetail)
     //   
     let {isShowMap} = this.props;
     let showMap = <Map/>;
-    if (!isShowMap) showMap = <Detail/>;
+    if (!isShowMap) showMap = <Detail data={data}/>;
 
     return (
       <Fragment>
