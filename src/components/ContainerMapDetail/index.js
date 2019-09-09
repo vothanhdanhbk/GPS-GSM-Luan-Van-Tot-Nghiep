@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from 'react';
 import Map from './Map';
 import Detail from './Detail'
+import {convertDataDetail} from "./../../../common/myFunction"
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,7 +19,7 @@ export default class ContainerMapDetail extends Component {
   }
   render() {
     let {dayDetail}=this.props;
-    console.log("TCL: ContainerMapDetail -> render -> dayDetail", dayDetail)
+    convertDataDetail(dayDetail)
     //   
     let {isShowMap} = this.props;
     let showMap = <Map/>;
