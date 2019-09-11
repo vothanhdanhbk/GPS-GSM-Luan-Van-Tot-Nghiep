@@ -162,10 +162,12 @@ function dataFinancialConvert(data, status) {
 }
 //  cover xu ly nhieu
 function coverXuLyNhieu(i, data, status) {
+  // console.log("TCL: coverXuLyNhieu -> i", i)
+  // console.log("TCL: coverXuLyNhieu -> status", status)
+  // console.log("TCL: coverXuLyNhieu -> data", data)
   let index = i,
     check = 0;
   while (true) {
-    index += 1;
     // console.log("TCL: coverXuLyNhieu -> index", index)
     if (data[index].status == 'Disconnected' && status != 'Disconnected') {
       index += 2;
@@ -184,6 +186,8 @@ function coverXuLyNhieu(i, data, status) {
       index += 3;
       break;
     }
+    index += 1;
+
   }
 
   return [i, index - 3, status];
@@ -224,14 +228,18 @@ function convertDataToTimeList(data) {
       if (data[i].timeStart == '00:00') {
         result.push({
           time:"00:00",
-          title:'Mất kế nối',
+          title:'Mất kết nối',
+          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'start')}
+`,
           circleColor: '#e32e2b',
           lineColor: '#e32e2b',
         });
       }else if(data[i].timeEnd == "23:59"){
         result.push({
           time:convertHours(data[i].timeStart),
-          title:'Mất kế nối',
+          title:'Mất kết nối',
+          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'end')}
+`,
           circleColor: '#e32e2b',
           lineColor: '#e32e2b',
         });
@@ -244,9 +252,11 @@ function convertDataToTimeList(data) {
       }else{
         result.push({
           time:convertHours(data[i].timeStart),
-          title:'Mất kế nối',
-          circleColor: '#e32e2b',
-          lineColor: '#e32e2b',
+          title:'Mất kết nối',
+          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'midble')}
+`,
+          circleColor: '#ebb0b0',
+          lineColor: '#ebb0b0',
         });
       }
       
@@ -255,21 +265,63 @@ function convertDataToTimeList(data) {
         result.push({
           time:convertHours(data[i].detail[0].hh),
           title:'Dừng',
+          description:`* Thời gian Dừng : ${convertThoiGianHoatDongStatus(data[i].detail)}
+`,
           circleColor: '#e6c949',
           lineColor: '#e6c949',
         });
       }else{
         result.push({
           time:convertHours(data[i].detail[0].hh),
-          title:'Đang di chuyển',
+          title:'Di chuyển',
+          description:`* Thời gian di chuyển : ${convertThoiGianHoatDongStatus(data[i].detail)}
+* Vận tốc trung bình : 55km/h
+* Quãng đường đi được : 5 (km)`,
           circleColor: '#66e359',
           lineColor: '#66e359',
         });
       }
     }
   }
-  console.log("TCL: convertDataToTimeList -> result", result)
+  // console.log("TCL: convertDataToTimeList -> result", result)
   return result
+}
+// cover thoi gian di duoc
+function convertThoiGianHoatDongStatus(data){
+  let result='';
+  if(data.length>0){
+    let time=data[data.length-1].hh-data[0].hh;
+    time=time/1000 -(time%1000)/1000;
+    if((time/3600-(time%3600)/3600) >0) {
+      result+=(time/3600-(time%3600)/3600)+" Giờ ";
+      time=time%3600
+    }
+    if(time/60 >0) result+=(time/60-(time%60)/60+1)+" Phút ";
+  }
+  return result
+}
+function convertThoiGianCuaDisconnect(data,kind){
+  let result='';
+  let time=null
+  if(kind=='start'){
+    time=new Date(data.timeEnd);
+    if(time.getHours()>0) result+=time.getHours()+ ' Giờ ';
+    result+= time.getMinutes() +' Phút'
+  }else if(kind=='midble'){
+     time=data.timeEnd-data.timeStart;
+    time=time/1000 -(time%1000)/1000;
+    if((time/3600-(time%3600)/3600) >0) {
+      result+=(time/3600-(time%3600)/3600)+" Giờ ";
+      time=time%3600
+    }
+    if(time/60 >0) result+=(time/60-(time%60)/60+1)+" Phút ";
+  }else{ // disconect cuoi ngay
+    time=new Date(data.timeStart);
+    if(24-time.getHours()>0) result+=(24-time.getHours())+ ' Giờ ';
+    result+= (60-time.getMinutes()) +' Phút'
+
+  }
+  return result;
 }
 // covert hours
 function convertHours(stamp){

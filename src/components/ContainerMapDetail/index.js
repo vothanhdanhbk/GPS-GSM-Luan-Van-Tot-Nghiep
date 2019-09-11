@@ -19,7 +19,11 @@ export default class ContainerMapDetail extends Component {
   }
   render() {
     let {dayDetail}=this.props;
-    let data =convertDataDetail(dayDetail)
+
+      let data =convertDataDetail(dayDetail)
+      // console.log("TCL: ContainerMapDetail -> render -> data", data)
+
+    
     //   
     let {isShowMap} = this.props;
     let showMap = <Map/>;

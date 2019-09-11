@@ -88,7 +88,9 @@ class App extends Component {
 
   render() {
     let {isShowMap, listDay, dayDetail, selectDay} = this.state;
+    // console.log("TCL: App -> render -> dayDetail.length", dayDetail.length)
     // console.log('TCL: App -> render -> dayDetail', dayDetail);
+    // if(dayDetail==undefined) dayDetail=[{dd:"",hh:0,lat:0,long:0,speed:0,status:'null'}]
     // console.log('TCL: App -> render -> selectDay', selectDay);
     let Footer = (
       <IconListHours

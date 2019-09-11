@@ -65,7 +65,7 @@ export default class Detail extends Component {
   // 
   render() {
     let {data} = this.props;
-    console.log('TCL: Detail -> componentDidMount -> data 1', data);
+    console.log('TCL: Detail -> componentDidMount -> data', data);
     let dataConvert=convertDataToTimeList(data)
 
     return (
