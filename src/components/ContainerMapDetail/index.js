@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import Map from './Map';
 import Detail from './Detail'
-import {convertDataDetail} from "./../../../common/myFunction"
+import {convertDataDetail,convertDataToTimeList} from "./../../../common/myFunction"
 
 import {
   SafeAreaView,
@@ -20,13 +20,13 @@ export default class ContainerMapDetail extends Component {
   render() {
     let {dayDetail}=this.props;
 
-      let data =convertDataDetail(dayDetail)
+      let data =convertDataToTimeList(convertDataDetail(dayDetail))
       // console.log("TCL: ContainerMapDetail -> render -> data", data)
 
     
     //   
     let {isShowMap} = this.props;
-    let showMap = <Map/>;
+    let showMap = <Map data={data}/>;
     if (!isShowMap) showMap = <Detail data={data}/>;
 
     return (

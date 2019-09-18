@@ -222,6 +222,7 @@ function getDistant(lat2, lon2, lat1, lon1) {
 }
 // convert Data To detail
 function convertDataToTimeList(data) {
+  // console.log("TCL: convertDataToTimeList -> data", data)
   let result = [];
   for (let i in data) {
     if ((data[i].status == 'Disconnected')) {
@@ -255,14 +256,15 @@ function convertDataToTimeList(data) {
           title:'Mất kết nối',
           description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'midble')}
 `,
-          circleColor: '#ebb0b0',
-          lineColor: '#ebb0b0',
+          circleColor: '#e32e2b',
+          lineColor: '#e32e2b',
         });
       }
       
     }else{
       if(data[i].status=="Stop"){
         result.push({
+          detail:data[i].detail,
           time:convertHours(data[i].detail[0].hh),
           title:'Dừng',
           description:`* Thời gian Dừng : ${convertThoiGianHoatDongStatus(data[i].detail)}
@@ -272,6 +274,7 @@ function convertDataToTimeList(data) {
         });
       }else{
         result.push({
+          detail:data[i].detail,
           time:convertHours(data[i].detail[0].hh),
           title:'Di chuyển',
           description:`* Thời gian di chuyển : ${convertThoiGianHoatDongStatus(data[i].detail)}
@@ -333,5 +336,33 @@ function convertHours(stamp){
    time+=k.getMinutes()+"";
    return time
 }
+// [Map]
+function COnvertToPolyline(detail, data, kk) {
+  let index=Number(kk)
+  let result2 = [];
+  for (let i in detail) {
+    result2.push({latitude: detail[i].lat, longitude: detail[i].long});
+  }
+  // noi voi diem phia sau cho min
+  if (index > 0) {
+    if (data[index - 1].title == 'Dừng') {
+      result2.unshift({
+        latitude: data[index - 1].detail[0].lat,
+        longitude: data[index - 1].detail[0].long,
+      });
+    }
+  }
+  // noi voi diem phia trươc cho min
+  if (index <(data.length-1)) {
 
-export {dataConvertFromServer, convertDataDetail, convertDataToTimeList};
+    if (data[index + 1].title == 'Dừng') {
+      result2.push({
+        latitude: data[index + 1].detail[0].lat,
+        longitude: data[index + 1].detail[0].long,
+      });
+    }
+  }
+
+  return result2;
+};
+export {dataConvertFromServer, convertDataDetail, convertDataToTimeList,COnvertToPolyline};

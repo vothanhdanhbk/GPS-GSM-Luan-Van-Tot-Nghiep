@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Timeline from 'react-native-timeline-flatlist';
-import {convertDataToTimeList} from '../../../../common/myFunction'
+// import {convertDataToTimeList} from '../../../../common/myFunction'
 export default class Detail extends Component {
   constructor(props) {
     super(props);
@@ -9,50 +9,50 @@ export default class Detail extends Component {
       data: [],
     };
 
-    this.data = [
-      {
-        time: '09:00',
-        title: 'Di Chuyển',
-        description: `* Vận tốc trung bình : 25 (km/h)
-* Quãng đường đi được : 5 (km)
-* Đi được khoảng thời gian : 60 (phút)
-* Điểm xuất phát : 26 Cộng Hòa,phường 13,Tân Bình
-* Điểm kết thúc :30 Ngô Đức kế,Bình Thành,tpHCM`,
-        circleColor: '#61ad55',
-        lineColor: '#61ad55',
-      },
-      {
-        time: '10:45',
-        title: 'Dừng',
-        description: `Thời gian dừng : 120 (phút)`,
-        circleColor: '#d63a1e',
-        lineColor: '#d63a1e',
-      },
-      {
-        time: '12:45',
-        title: 'Di Chuyển',
-        description: `* Vận tốc trung bình : 55 (km/h)
-* Đi được khoảng thời gian : 60 (phút)
-* Điểm xuất phát : 26 Cộng Hòa,phường 13,Tân Bình
-* Điểm kết thúc :30 Ngô Đức kế,Bình Thành,tpHCM`,
-        circleColor: '#61ad55',
-        lineColor: '#61ad55',
-      },
-      {
-        time: '10:45',
-        title: 'Dừng',
-        description: `Thời gian dừng : 80 (phút)`,
-        circleColor: '#d63a1e',
-        lineColor: '#d63a1e',
-      },
-      {
-        time: '00:00',
-        title: 'Dừng',
-        description: `Thời gian dừng : N/A (phút)`,
-        circleColor: '#d63a1e',
-        lineColor: '#d63a1e',
-      },
-    ];
+//     this.data = [
+//       {
+//         time: '09:00',
+//         title: 'Di Chuyển',
+//         description: `* Vận tốc trung bình : 25 (km/h)
+// * Quãng đường đi được : 5 (km)
+// * Đi được khoảng thời gian : 60 (phút)
+// * Điểm xuất phát : 26 Cộng Hòa,phường 13,Tân Bình
+// * Điểm kết thúc :30 Ngô Đức kế,Bình Thành,tpHCM`,
+//         circleColor: '#61ad55',
+//         lineColor: '#61ad55',
+//       },
+//       {
+//         time: '10:45',
+//         title: 'Dừng',
+//         description: `Thời gian dừng : 120 (phút)`,
+//         circleColor: '#d63a1e',
+//         lineColor: '#d63a1e',
+//       },
+//       {
+//         time: '12:45',
+//         title: 'Di Chuyển',
+//         description: `* Vận tốc trung bình : 55 (km/h)
+// * Đi được khoảng thời gian : 60 (phút)
+// * Điểm xuất phát : 26 Cộng Hòa,phường 13,Tân Bình
+// * Điểm kết thúc :30 Ngô Đức kế,Bình Thành,tpHCM`,
+//         circleColor: '#61ad55',
+//         lineColor: '#61ad55',
+//       },
+//       {
+//         time: '10:45',
+//         title: 'Dừng',
+//         description: `Thời gian dừng : 80 (phút)`,
+//         circleColor: '#d63a1e',
+//         lineColor: '#d63a1e',
+//       },
+//       {
+//         time: '00:00',
+//         title: 'Dừng',
+//         description: `Thời gian dừng : N/A (phút)`,
+//         circleColor: '#d63a1e',
+//         lineColor: '#d63a1e',
+//       },
+//     ];
   }
   // componentDidMount() {
   //   let {data} = this.props;
@@ -65,8 +65,16 @@ export default class Detail extends Component {
   // 
   render() {
     let {data} = this.props;
-    console.log('TCL: Detail -> componentDidMount -> data', data);
-    let dataConvert=convertDataToTimeList(data)
+    // console.log('TCL: Detail -> componentDidMount -> data', data);
+    // let dataConvert=data;
+    let dataConvert=[];let count=1
+    for(let i in data){
+      if(data[i].title=="Dừng"){
+        data[i].title=`Dừng (${count})`
+        count++
+      }
+      dataConvert.push(data[i])
+    }
 
     return (
       <View style={styles.container}>
