@@ -187,7 +187,6 @@ function coverXuLyNhieu(i, data, status) {
       break;
     }
     index += 1;
-
   }
 
   return [i, index - 3, status];
@@ -208,7 +207,78 @@ function checkTimeNow(stamps) {
     return false;
   }
 }
-
+function convertDistantV(input) {
+  let {...data} = input;
+  // console.log('TCL: convertDistantV -> data', data);
+  for (let i in data) {
+    let index = Number(i);
+    let localArr = [];
+    let timeMove = 0;
+    if (data[index].title == 'Di chuyển') {
+      // tinh dia diem dung truoc khi di chuyen
+      if (i > 0) {
+        if (data[index - 1].title == 'Dừng') {
+          localArr.push(data[index - 1].detail[0]);
+        }
+      }
+      // tinh dia diem di chuyen
+      localArr = localArr.concat(data[index].detail);
+      // tinh dia diem sau di chuyen
+      if (index < data.length - 1) {
+        if (data[index + 1].title == 'Dừng') {
+          localArr.push(data[index + 1].detail[0]);
+        }
+      }
+      // tinh thoi gian di chuyen
+      timeMove =
+        data[index].detail[data[index].detail.length - 1].hh -
+        data[index].detail[0].hh;
+      // //  co duowc mang toa do di chuyen [localArr]
+      // console.log("TCL: convertDistantV -> localArr", localArr)
+      //  tinh duoc khoan cach di chuyen
+      let financialDistanceResult = solveDistance(localArr);
+      // console.log('TCL: convertDistantV -> xxxxxxxxxxxxxxxxxxxxxx m :', financialDistanceResult);
+      //  co duoc thoi gian di chuyen
+      // console.log("TCL: convertDistantV -> timeMove", timeMove)
+      let vanToc = (financialDistanceResult * 3600) / timeMove;
+      // convert lai data
+      data[index].khoanCach = financialDistanceResult.toFixed(0);
+      data[index].vanToc = vanToc.toFixed(1);
+    }
+  }
+  return data;
+}
+function solveDistance(localArr) {
+  // console.log('TCL: solveDistance -> localArr', localArr);
+  let financialDistanceResult = 0;
+  let distant = 0;
+  for (let i = 0; i <= localArr.length - 1; i++) {
+    // console.log("TCL: solveDistance -> i", i)
+    if (i + 3 <= localArr.length - 1) {
+      distant = getDistant(
+        localArr[i + 3].lat,
+        localArr[i + 3].long,
+        localArr[i].lat,
+        localArr[i].long,
+      );
+      //  console.log("local 1 :  ",localArr[i+3].lat+","+localArr[i+3].long)
+      //  console.log("local 2 :  ",localArr[i].lat+","+localArr[i].long)
+      // console.log("TCL: solveDistance -> distant 1 :", distant)
+    } else {
+      // console.log("cong cuoi la :")
+      distant = getDistant(
+        localArr[localArr.length - 1].lat,
+        localArr[localArr.length - 1].long,
+        localArr[i].lat,
+        localArr[i].long,
+      );
+      // console.log("TCL: solveDistance -> distant 2 :", distant)
+    }
+    i = i + 2;
+    financialDistanceResult += distant - 9;
+  }
+  return financialDistanceResult;
+}
 // tinh khoang cach
 function getDistant(lat2, lon2, lat1, lon1) {
   var p = 0.017453292519943295; // Math.PI / 180
@@ -225,61 +295,75 @@ function convertDataToTimeList(data) {
   // console.log("TCL: convertDataToTimeList -> data", data)
   let result = [];
   for (let i in data) {
-    if ((data[i].status == 'Disconnected')) {
+    if (data[i].status == 'Disconnected') {
       if (data[i].timeStart == '00:00') {
         result.push({
-          time:"00:00",
-          title:'Mất kết nối',
-          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'start')}
+          time: '00:00',
+          title: 'Mất kết nối',
+          description: `* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(
+            data[i],
+            'start',
+          )}
 `,
           circleColor: '#e32e2b',
           lineColor: '#e32e2b',
         });
-      }else if(data[i].timeEnd == "23:59"){
+      } else if (data[i].timeEnd == '23:59') {
         result.push({
-          time:convertHours(data[i].timeStart),
-          title:'Mất kết nối',
-          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'end')}
+          time: convertHours(data[i].timeStart),
+          title: 'Mất kết nối',
+          description: `* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(
+            data[i],
+            'end',
+          )}
 `,
           circleColor: '#e32e2b',
           lineColor: '#e32e2b',
         });
         result.push({
-          time:"23:59",
-          title:'',
+          time: '23:59',
+          title: '',
           circleColor: '#e32e2b',
-          lineColor: "while",
+          lineColor: 'while',
         });
-      }else{
+      } else {
         result.push({
-          time:convertHours(data[i].timeStart),
-          title:'Mất kết nối',
-          description:`* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(data[i],'midble')}
+          time: convertHours(data[i].timeStart),
+          title: 'Mất kết nối',
+          description: `* Thời gian mất kết nối : ${convertThoiGianCuaDisconnect(
+            data[i],
+            'midble',
+          )}
 `,
           circleColor: '#e32e2b',
           lineColor: '#e32e2b',
         });
       }
-      
-    }else{
-      if(data[i].status=="Stop"){
+    } else {
+      if (data[i].status == 'Stop') {
         result.push({
-          detail:data[i].detail,
-          time:convertHours(data[i].detail[0].hh),
-          title:'Dừng',
-          description:`* Thời gian Dừng : ${convertThoiGianHoatDongStatus(data[i].detail)}
+          detail: data[i].detail,
+          time: convertHours(data[i].detail[0].hh),
+          title: 'Dừng',
+          description: `* Thời gian Dừng : ${convertThoiGianHoatDongStatus(
+            data[i].detail,
+          )}
 `,
           circleColor: '#e6c949',
           lineColor: '#e6c949',
         });
-      }else{
+      } else {
         result.push({
-          detail:data[i].detail,
-          time:convertHours(data[i].detail[0].hh),
-          title:'Di chuyển',
-          description:`* Thời gian di chuyển : ${convertThoiGianHoatDongStatus(data[i].detail)}
-* Vận tốc trung bình : 55km/h
-* Quãng đường đi được : 5 (km)`,
+          detail: data[i].detail,
+          time: convertHours(data[i].detail[0].hh),
+          title: 'Di chuyển',
+          //           description: `* Thời gian di chuyển : ${convertThoiGianHoatDongStatus(
+          //             data[i].detail,
+          //           )}
+          // * Vận tốc trung bình : vanToc
+          // * Quãng đường đi được : khoanCach`,
+          timeMove: `${convertThoiGianHoatDongStatus(data[i].detail)}`,
+          description: '',
           circleColor: '#66e359',
           lineColor: '#66e359',
         });
@@ -287,58 +371,58 @@ function convertDataToTimeList(data) {
     }
   }
   // console.log("TCL: convertDataToTimeList -> result", result)
-  return result
+  return result;
 }
 // cover thoi gian di duoc
-function convertThoiGianHoatDongStatus(data){
-  let result='';
-  if(data.length>0){
-    let time=data[data.length-1].hh-data[0].hh;
-    time=time/1000 -(time%1000)/1000;
-    if((time/3600-(time%3600)/3600) >0) {
-      result+=(time/3600-(time%3600)/3600)+" Giờ ";
-      time=time%3600
+function convertThoiGianHoatDongStatus(data) {
+  let result = '';
+  if (data.length > 0) {
+    let time = data[data.length - 1].hh - data[0].hh;
+    time = time / 1000 - (time % 1000) / 1000;
+    if (time / 3600 - (time % 3600) / 3600 > 0) {
+      result += time / 3600 - (time % 3600) / 3600 + ' Giờ ';
+      time = time % 3600;
     }
-    if(time/60 >0) result+=(time/60-(time%60)/60+1)+" Phút ";
+    if (time / 60 > 0) result += time / 60 - (time % 60) / 60 + 1 + ' Phút ';
   }
-  return result
+  return result;
 }
-function convertThoiGianCuaDisconnect(data,kind){
-  let result='';
-  let time=null
-  if(kind=='start'){
-    time=new Date(data.timeEnd);
-    if(time.getHours()>0) result+=time.getHours()+ ' Giờ ';
-    result+= time.getMinutes() +' Phút'
-  }else if(kind=='midble'){
-     time=data.timeEnd-data.timeStart;
-    time=time/1000 -(time%1000)/1000;
-    if((time/3600-(time%3600)/3600) >0) {
-      result+=(time/3600-(time%3600)/3600)+" Giờ ";
-      time=time%3600
+function convertThoiGianCuaDisconnect(data, kind) {
+  let result = '';
+  let time = null;
+  if (kind == 'start') {
+    time = new Date(data.timeEnd);
+    if (time.getHours() > 0) result += time.getHours() + ' Giờ ';
+    result += time.getMinutes() + ' Phút';
+  } else if (kind == 'midble') {
+    time = data.timeEnd - data.timeStart;
+    time = time / 1000 - (time % 1000) / 1000;
+    if (time / 3600 - (time % 3600) / 3600 > 0) {
+      result += time / 3600 - (time % 3600) / 3600 + ' Giờ ';
+      time = time % 3600;
     }
-    if(time/60 >0) result+=(time/60-(time%60)/60+1)+" Phút ";
-  }else{ // disconect cuoi ngay
-    time=new Date(data.timeStart);
-    if(24-time.getHours()>0) result+=(24-time.getHours())+ ' Giờ ';
-    result+= (60-time.getMinutes()) +' Phút'
-
+    if (time / 60 > 0) result += time / 60 - (time % 60) / 60 + 1 + ' Phút ';
+  } else {
+    // disconect cuoi ngay
+    time = new Date(data.timeStart);
+    if (24 - time.getHours() > 0) result += 24 - time.getHours() + ' Giờ ';
+    result += 60 - time.getMinutes() + ' Phút';
   }
   return result;
 }
 // covert hours
-function convertHours(stamp){
-   let k=new Date(stamp);
-   let time="";
-   if(k.getHours()<10) time+="0";
-   time+=k.getHours()+":";
-   if(k.getMinutes()<10) time+="0";
-   time+=k.getMinutes()+"";
-   return time
+function convertHours(stamp) {
+  let k = new Date(stamp);
+  let time = '';
+  if (k.getHours() < 10) time += '0';
+  time += k.getHours() + ':';
+  if (k.getMinutes() < 10) time += '0';
+  time += k.getMinutes() + '';
+  return time;
 }
 // [Map]
 function COnvertToPolyline(detail, data, kk) {
-  let index=Number(kk)
+  let index = Number(kk);
   let result2 = [];
   for (let i in detail) {
     result2.push({latitude: detail[i].lat, longitude: detail[i].long});
@@ -353,8 +437,7 @@ function COnvertToPolyline(detail, data, kk) {
     }
   }
   // noi voi diem phia trươc cho min
-  if (index <(data.length-1)) {
-
+  if (index < data.length - 1) {
     if (data[index + 1].title == 'Dừng') {
       result2.push({
         latitude: data[index + 1].detail[0].lat,
@@ -364,5 +447,11 @@ function COnvertToPolyline(detail, data, kk) {
   }
 
   return result2;
+}
+export {
+  dataConvertFromServer,
+  convertDataDetail,
+  convertDataToTimeList,
+  COnvertToPolyline,
+  convertDistantV,
 };
-export {dataConvertFromServer, convertDataDetail, convertDataToTimeList,COnvertToPolyline};
