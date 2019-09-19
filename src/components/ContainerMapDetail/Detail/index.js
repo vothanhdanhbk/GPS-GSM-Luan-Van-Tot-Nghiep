@@ -11,28 +11,17 @@ export default class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      data: [{},{}],
+      totalDistant:0,
+      dataX:null,
       iconSelected:2,
       xangX:motoX,
       isShowPopUp:true
     };
   }
-// set icon
-setIcon=(iconSelected,xangX)=>{
-  this.setState({
-    iconSelected:iconSelected,
-    xangX:xangX
-  })
-}
-//  close popup
-closePopUp=()=>{
-  this.setState({
-    isShowPopUp:false
-  })
-}
-  render() {
+  componentWillMount(){
     let {data} = this.props;
-    console.log('TCL: Detail -> render -> data', data);
+//     console.log('TCL: Detail -> render -> data', data);
 
     let count=1
 
@@ -52,10 +41,54 @@ closePopUp=()=>{
         totalDistant+=Number(dataConvert2[i].khoanCach);
       }
     }
+    this.setState({
+      data:dataConvert2,
+      totalDistant:totalDistant
+    })
+  }
 
-
-
-
+  componentWillReceiveProps(nextProps){
+    if(nextProps && nextProps.data != undefined){
+      let {data} = nextProps;
+      //     console.log('TCL: Detail -> render -> data', data);
+          let count=1
+          //  co duoc khoan cach roi
+          let dataConvert2 = convertDistantV(data);
+          // dua khoan cach vao description
+          let totalDistant=0;
+          for (let i in dataConvert2) {
+            if (dataConvert2[i].title == 'Dừng') {
+              dataConvert2[i].title = `Dừng (${count})`;
+              count++;
+            }
+            if (dataConvert2[i].title == "Di chuyển") {
+              dataConvert2[i].description=`* Thời gian di chuyển : ${dataConvert2[i].timeMove}
+* Vận tốc trung bình : ${dataConvert2[i].vanToc} (km/h)
+* Quãng đường đi được : ${dataConvert2[i].khoanCach} (m)`;
+              totalDistant+=Number(dataConvert2[i].khoanCach);
+            }
+          }
+          this.setState({
+            data:dataConvert2,
+            totalDistant:totalDistant
+          })
+    }
+  }
+// set icon
+setIcon=(iconSelected,xangX)=>{
+  this.setState({
+    iconSelected:iconSelected,
+    xangX:xangX
+  })
+}
+//  close popup
+closePopUp=()=>{
+  this.setState({
+    isShowPopUp:false
+  })
+}
+  render() {
+    let {data,totalDistant} =this.state
 
     //  show popUp
     let {isShowPopUp}=this.state

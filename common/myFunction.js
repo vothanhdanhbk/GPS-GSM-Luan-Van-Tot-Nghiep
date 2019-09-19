@@ -208,8 +208,8 @@ function checkTimeNow(stamps) {
   }
 }
 function convertDistantV(input) {
-  let {...data} = input;
-  // console.log('TCL: convertDistantV -> data', data);
+  let data= input;
+  console.log('TCL: convertDistantV -> data', data);
   for (let i in data) {
     let index = Number(i);
     let localArr = [];
