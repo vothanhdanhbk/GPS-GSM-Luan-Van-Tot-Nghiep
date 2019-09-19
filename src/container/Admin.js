@@ -17,12 +17,12 @@ import {
   Platform,
 } from 'react-native';
 
-import {MyHeader, IconListHours, ContainerMapDetail} from './src/components';
+import {MyHeader, IconListHours, ContainerMapDetail} from '../components';
 // firebase
-import {firebaseApp} from './common/FirebaseConfig';
-import {dataConvertFromServer} from './common/myFunction';
+import {firebaseApp} from '../../common/FirebaseConfig';
+import {dataConvertFromServer} from '../../common/myFunction';
 
-class App extends Component {
+class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -110,7 +110,7 @@ class App extends Component {
 
     return (
       <Fragment>
-        <SafeAreaView style={styles.safeAreaView}>
+        {/* <SafeAreaView style={styles.safeAreaView}> */}
           <View style={styles.container}>
             <View style={styles.header}>
               <MyHeader />
@@ -125,17 +125,17 @@ class App extends Component {
             <View style={styles.footer}>{Footer}</View>
           </View>
           {/*  */}
-        </SafeAreaView>
+        {/* </SafeAreaView> */}
       </Fragment>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  safeAreaView: {
-    flex: 1,
-    paddingTop: Platform.OS === 'Android' ? 25 : 0,
-  },
+  // safeAreaView: {
+  //   flex: 1,
+  //   paddingTop: Platform.OS === 'Android' ? 25 : 0,
+  // },
   container: {
     flexDirection: 'column',
     width: '100%',
@@ -160,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Admin;
