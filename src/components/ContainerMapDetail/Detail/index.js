@@ -70,7 +70,8 @@ export default class Detail extends Component {
           }
           this.setState({
             data:dataConvert2,
-            totalDistant:totalDistant
+            totalDistant:totalDistant,
+            isShowPopUp:true
           })
     }
   }
