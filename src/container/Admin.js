@@ -32,6 +32,7 @@ class Admin extends Component {
       // day detail
       dayDetail: [],
       selectDay: '',
+      chooseValue:2
     };
   }
   //
@@ -62,17 +63,22 @@ class Admin extends Component {
   }
 
   //  select footer Map/Detail/...
-  onTouchMap = () => {
+  choose=(value)=>{
     this.setState({
-      isShowMap: true,
-    });
-  };
-  //
-  onTouchDetail = () => {
-    this.setState({
-      isShowMap: false,
-    });
-  };
+      chooseValue:value
+    })
+  }
+  // onTouchMap = () => {
+  //   this.setState({
+  //     isShowMap: true,
+  //   });
+  // };
+  // //
+  // onTouchDetail = () => {
+  //   this.setState({
+  //     isShowMap: false,
+  //   });
+  // };
   //Get selected day here
   sendSelected = day => {
     let {listDay, fullData} = this.state;
@@ -87,15 +93,16 @@ class Admin extends Component {
   };
 
   render() {
-    let {isShowMap, listDay, dayDetail, selectDay} = this.state;
+    let {isShowMap, listDay, dayDetail, chooseValue} = this.state;
     // console.log("TCL: App -> render -> dayDetail.length", dayDetail.length)
     // console.log('TCL: App -> render -> dayDetail', dayDetail);
     // if(dayDetail==undefined) dayDetail=[{dd:"",hh:0,lat:0,long:0,speed:0,status:'null'}]
     // console.log('TCL: App -> render -> selectDay', selectDay);
     let Footer = (
       <IconListHours
-        onTouchMap={this.onTouchMap}
-        onTouchDetail={this.onTouchDetail}
+        // onTouchMap={this.onTouchMap}
+        // onTouchDetail={this.onTouchDetail}
+        choose={this.choose}
         listDay={listDay}
         sendSelected={this.sendSelected}
       />
@@ -118,7 +125,7 @@ class Admin extends Component {
 
             <View style={styles.body}>
               <ContainerMapDetail 
-                 isShowMap={isShowMap} 
+                 chooseValue={chooseValue} 
                  dayDetail={dayDetail}
               />
             </View>
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
   },
   // Show menu
   footer: {
-    flex: 2,
+    flex: 4,
     backgroundColor: '#B2A198',
   },
 });

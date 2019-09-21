@@ -23,30 +23,38 @@ export default class IconListHours extends Component {
 
       listDay: [],
       selectDay: '',
+      selected:2
     };
   }
   //
   componentDidMount() {
-let listDay=this.props.listDay;
+    let listDay = this.props.listDay;
     this.setState({
       listDay: listDay,
-      selectDay: listDay[listDay.length-1].label,
+      selectDay: listDay[listDay.length - 1].label,
     });
   }
   //
 
   // map
   onTouchMap = () => {
-    this.props.onTouchMap();
+    this.props.choose(2);
     this.setState({
-      isOnMap: true,
+      selected: 2,
     });
   };
   // detail
   onTouchDetail = () => {
-    this.props.onTouchDetail();
+    this.props.choose(3);
     this.setState({
-      isOnMap: false,
+      selected: 3,
+    });
+  };
+  // detail
+  onTouchLocation = () => {
+    this.props.choose(1);
+    this.setState({
+      selected: 1,
     });
   };
   //  option Day
@@ -65,14 +73,14 @@ let listDay=this.props.listDay;
   //get day here
 
   onChangSelectModal = day => {
-    this.props.sendSelected(day)
+    this.props.sendSelected(day);
     this.setState({selectDay: day.label});
   };
   // option hours
   // get hours here
   // getHours = itemValue => {
   //   this.setState({selectHours: itemValue});
-    
+
   // };
   //
   render() {
@@ -80,8 +88,54 @@ let listDay=this.props.listDay;
     return (
       <Fragment>
         <View style={styles.listHoursContainer}>
-          <View style={styles.selectOptions}>
-            {/* day */}
+          <View style={{flexDirection: 'row'}}>
+            <Text>Ngày giám sát :</Text>
+            <TouchableOpacity onPress={this.onPressDay}>
+              <View
+                style={{
+                  flex: 1,
+                  paddingLeft: 20,
+                  marginLeft:3,
+                  width: 150,
+                  borderRadius: 5,
+                  backgroundColor: '#c7c7bede',
+                }}>
+                <Text style={{color: 'blue'}}>{selectDay}</Text>
+                <Icon
+                  name="arrow-drop-down"
+                  color="#5b5e5c"
+                  containerStyle={{marginTop: -20, marginLeft: 80}}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{flexDirection: 'row',marginTop:6,paddingLeft:"12%"}}>
+            <TouchableOpacity onPress={this.onTouchLocation}>
+              <Icon
+                name="location-searching"
+                color={this.state.selected==1?"green":"#5b5e5c"}
+                containerStyle={[{paddingHorizontal:25},this.state.selected==1?styles.borderIcon:{}]}
+                iconStyle={{fontSize: 28}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.onTouchMap}>
+              <Icon
+                name="map"
+                color={this.state.selected==2?"green":"#5b5e5c"}
+                iconStyle={{fontSize: 28}}
+                containerStyle={[{marginLeft:30,paddingHorizontal:25},,this.state.selected==2?styles.borderIcon:{}]}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.onTouchDetail}>
+              <Icon
+                name="list"
+                color={this.state.selected==3?"green":"#5b5e5c"}
+                iconStyle={{fontSize: 28}}
+                containerStyle={[{marginLeft:30,paddingHorizontal:25},,this.state.selected==3?styles.borderIcon:{}]}
+              />
+            </TouchableOpacity>
+          </View>
+          {/* <View style={styles.selectOptions}>
             <View style={styles.day}>
               <View style={styles.selectLeft}>
                 <Text style={{fontSize: 12, marginTop: 5}}>
@@ -94,7 +148,6 @@ let listDay=this.props.listDay;
                   {marginLeft: 17, marginTop: 4, flexDirection: 'row'},
                 ]}>
                 <View style={{flex: 8}}>
-                  {/* Day */}
                   <View style={{flex: 1, fontWeight: '800'}}>
                     <TouchableOpacity onPress={this.onPressDay}>
                       <Text>{selectDay}</Text>
@@ -118,7 +171,7 @@ let listDay=this.props.listDay;
             <TouchableOpacity onPress={this.onTouchDetail}>
               <Text style={isOnMap ? {color: '#676e69'} : {}}>Detail</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
         {/* modal */}
         <ModalSelector
@@ -137,17 +190,19 @@ let listDay=this.props.listDay;
 
 const styles = StyleSheet.create({
   listHoursContainer: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
     width: '100%',
     height: '100%',
-    alignItems: 'center',
+    // alignItems: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 5,
   },
   //  ==>
   selectOptions: {
     flex: 12,
     // backgroundColor: 'red',
     flexDirection: 'column',
-    marginLeft:10
+    marginLeft: 10,
   },
   day: {
     // backgroundColor: 'blue',
@@ -173,4 +228,10 @@ const styles = StyleSheet.create({
   detail: {
     flex: 2,
   },
+  borderIcon:{
+    backgroundColor:"#66666685",
+    borderWidth:1,
+    borderColor:"#8e7d7d96"
+
+  }
 });

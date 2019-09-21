@@ -448,10 +448,47 @@ function COnvertToPolyline(detail, data, kk) {
 
   return result2;
 }
+
+// [MapUser]
+function getDataGo(GoData){
+// console.log("TCL: getDataGo -> GoData", GoData)
+  // lay pointWay de hien thi duong di [array]
+  let steps=GoData.steps
+  // console.log("TCL: getDataGo -> GoData.steps", GoData.steps)
+  let pointWay = []
+  for(let i in steps){
+    if(i==0){
+      pointWay.push({latitude:steps[i].start_location.lat,longitude:steps[i].start_location.lng})
+      pointWay.push({latitude:steps[i].end_location.lat,longitude:steps[i].end_location.lng})
+    }else{
+      pointWay.push({latitude:steps[i].end_location.lat,longitude:steps[i].end_location.lng})
+    }
+  }
+  // co ket qua duong di
+  // console.log("TCL: getDataGo -> pointWay", pointWay)
+  //  lay pointInfor
+  let pointInfor={latitude:33.12,longitude:33.34}
+  if(pointWay.length>2){
+    pointInfor.latitude=pointWay[Math.floor(pointWay.length/2)].latitude
+    pointInfor.longitude=pointWay[Math.floor(pointWay.length/2)].longitude
+  }
+  return{
+    distance:GoData.distance.text,
+    duration:GoData.duration.text,
+    end_address:GoData.end_address,
+    end_location:GoData.end_location,
+    start_address:GoData.start_address,
+    start_location:GoData.start_location,
+    pointWay:pointWay,
+    pointInfor:pointInfor
+  }
+  
+}
 export {
   dataConvertFromServer,
   convertDataDetail,
   convertDataToTimeList,
   COnvertToPolyline,
   convertDistantV,
+  getDataGo
 };

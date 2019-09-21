@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import Map from './Map';
 import Detail from './Detail'
 import {convertDataDetail,convertDataToTimeList} from "./../../../common/myFunction"
-
+import MapUser from "./../ContainerMapUser/MapUser"
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,13 +25,20 @@ export default class ContainerMapDetail extends Component {
 
     
     //   
-    let {isShowMap} = this.props;
-    let showMap = <Map data={data}/>;
-    if (!isShowMap) showMap = <Detail data={data}/>;
-
+    let {chooseValue} = this.props;
+    let result=null
+    if(chooseValue==1){
+      result=<MapUser/>
+    }else if(chooseValue==2){
+      result= <Map data={data}/>
+    }else if(chooseValue==3){
+      result=<Detail data={data}/>;
+    }
+    // let showMap = <Map data={data}/>;
+    // if (!isShowMap) showMap = <Detail data={data}/>;
     return (
       <Fragment>
-        {showMap}
+        {result}
       </Fragment>
     );
   }

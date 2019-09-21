@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 
 import {MyHeader, IconListHours, ContainerMapDetail} from '../components';
+import MapUser from "./../components/ContainerMapUser/MapUser"
 // firebase
 import {firebaseApp} from '../../common/FirebaseConfig';
 import {dataConvertFromServer} from '../../common/myFunction';
@@ -67,8 +68,9 @@ class User extends Component {
 
             <View style={styles.body}>
               <Text>body</Text>
+              <MapUser/>
             </View>
-            <View style={styles.footer}><Text>Footer</Text></View>
+            {/* <View style={styles.footer}><Text>Footer</Text></View> */}
           </View>
           {/*  */}
         {/* </SafeAreaView> */}
