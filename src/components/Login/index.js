@@ -13,7 +13,7 @@ import {
   AsyncStorage,
   ToastAndroid,
   ImageBackground,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 // import {
 //   StackNavigator,
@@ -22,12 +22,12 @@ import {
 const background = require('./background.png');
 const lockIcon = require('./ic_lock.png');
 const userIcon = require('./ic_user.png');
+const bkLogo = require('../../../common/img/bkLogo.png');
 // admin
-const userAdmin="admin"
-const passAdmin="admin"
-const userUser="user"
-const passUser="user"
-
+const userAdmin = 'admin';
+const passAdmin = 'admin';
+const userUser = 'user';
+const passUser = 'user';
 
 export default class SignUpPage extends Component {
   constructor(props) {
@@ -36,35 +36,32 @@ export default class SignUpPage extends Component {
     this.state = {
       userName: '',
       password: '',
-    //   confirmPassword: '',
+      //   confirmPassword: '',
     };
   }
   componentWillMount() {
     console.log('componentWillMount');
   }
   _onPressLogin(event) {
-    let {userName,password} =this.state;
-    if(userName==userAdmin &&password==passAdmin){
-        this.props.onLogin("admin")
-    }else if(userName==userUser &&password==passUser){
-        this.props.onLogin("user")
-    }else {
-        alert("Thông tin đăng nhập không chính xác .")
+    let {userName, password} = this.state;
+    if (userName == userAdmin && password == passAdmin) {
+      this.props.onLogin('admin');
+    } else if (userName == userUser && password == passUser) {
+      this.props.onLogin('user');
+    } else {
+      alert('Thông tin đăng nhập không chính xác .');
     }
-
-      
   }
-    //   static navigationOptions = {
-    //     title: 'Sign Up',
-    //      header: null,
-    //   };
+  //   static navigationOptions = {
+  //     title: 'Sign Up',
+  //      header: null,
+  //   };
   render() {
     //  var { navigate } = this.props.navigation;
     return (
       <ImageBackground
         style={[styles.container, styles.background]}
-        source={background}
-        >
+        source={background}>
         <View style={styles.container} />
 
         <View style={styles.wrapper}>
@@ -139,6 +136,18 @@ export default class SignUpPage extends Component {
           </TouchableOpacity>
         </View>
 
+        {/* logo bach khoa here */}
+        <Image
+          source={bkLogo}
+          // resizeMode="contain"
+          style={{
+            position: 'absolute',
+            top: '10%',
+            left: '34%',
+            width: 125,
+            height:125
+          }}
+        />
         <View style={styles.container} />
       </ImageBackground>
     );
