@@ -18,61 +18,55 @@ import {
 } from 'react-native';
 
 import {MyHeader, IconListHours, ContainerMapDetail} from '../components';
-import MapUser from "./../components/ContainerMapUser/MapUser"
+import MapUser from './../components/ContainerMapUser/MapUser';
 // firebase
-import {firebaseApp} from '../../common/FirebaseConfig';
-import {dataConvertFromServer} from '../../common/myFunction';
+// import {firebaseApp} from '../../common/FirebaseConfig';
 
 class User extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
   //
 
-//   componentDidMount() {
-//     //  lay tat ca cac du lieu xuong 1 lan
-//     firebaseApp
-//       .database()
-//       .ref('data')
-//       .once('value', snapshot => {
-//         // convert sang kieu du lieu minh mong muon
-//         let dataConvert = dataConvertFromServer(snapshot.val());
-//         let lengthFullData = dataConvert.fullData.length;
-//         this.setState({
-//           listDay: dataConvert.listDay,
-//           fullData: dataConvert.fullData,
-//           dayDetail: dataConvert.fullData[lengthFullData - 1],
-//           selectDay: dataConvert.listDay[lengthFullData - 1],
-//         });
-//       });
-//     //   lang nghe firebase voi du lieu ngay hien tai (ngay hom nay)
-//     // firebaseApp
-//     // .database()
-//     // .ref('data/'+getDayNow()+'/')
-//     // .on('value', snapshot => {
-//     //   console.log(snapshot.val());
-//     // });
-//   }
+  // componentDidMount() {
+  //   //   lang nghe firebase voi du lieu ngay hien tai (ngay hom nay)
+  //   firebaseApp
+  //     .database()
+  //     .ref('adminSet')
+  //     .on('value', snapshot => {
+  //       if (snapshot.val().location != '') {
+  //         alert(snapshot.val().location);
+  //         alert(snapshot.val().message);
+  //       }
+  //     });
+  // }
+  //
+  // onSent = (inputAdressValue, inputMessageValue) => {
+  //   firebaseApp
+  //     .database()
+  //     .ref('adminSet')
+  //     .set({
+  //       location: inputAdressValue,
+  //       message: inputMessageValue,
+  //     });
+  // };
 
   render() {
-
     return (
       <Fragment>
         {/* <SafeAreaView style={styles.safeAreaView}> */}
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <MyHeader />
-            </View>
-
-            <View style={styles.body}>
-              <Text>body</Text>
-              <MapUser/>
-            </View>
-            {/* <View style={styles.footer}><Text>Footer</Text></View> */}
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <MyHeader />
           </View>
-          {/*  */}
+
+          <View style={styles.body}>
+            <MapUser />
+          </View>
+          {/* <View style={styles.footer}><Text>Footer</Text></View> */}
+        </View>
+        {/*  */}
         {/* </SafeAreaView> */}
       </Fragment>
     );

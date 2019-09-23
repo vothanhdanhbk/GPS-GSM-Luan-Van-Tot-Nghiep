@@ -34,8 +34,8 @@ class App extends Component {
     return (
       <Fragment>
         <SafeAreaView style={styles.safeAreaView}>
-            <Admin/>
-            {/* <User/> */}
+            {/* <Admin/> */}
+            <User/>
         </SafeAreaView>
       </Fragment>
     );

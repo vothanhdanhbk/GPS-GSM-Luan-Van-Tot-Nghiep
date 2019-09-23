@@ -1,14 +1,14 @@
 import {stringLiteral} from '@babel/types';
 
 //  not use
-//  function getDayNow(){
-//       var dt=new Date();
-//       let date= dt.getDate() <10 ?'0'+dt.getDate():dt.getDate();
-//       let monthReal=dt.getMonth() + 1
-//       let month=monthReal <10?'0'+monthReal:monthReal
-//       let year =dt.getFullYear()-2000
-//       return (date +'-'+month+'-'+year)
-// }
+ function getDayNow(){
+      var dt=new Date();
+      let date= dt.getDate() <10 ?'0'+dt.getDate():dt.getDate();
+      // let monthReal=dt.getMonth() + 1
+      // let month=monthReal <10?'0'+monthReal:monthReal
+      // let year =dt.getFullYear()-2000
+      return (date)
+}
 // convert my data from server
 function dataConvertFromServer(dataServer) {
   //   console.log(dataServer);
@@ -490,5 +490,7 @@ export {
   convertDataToTimeList,
   COnvertToPolyline,
   convertDistantV,
-  getDataGo
+  getDataGo,
+  getDayNow,
+  convertDeg
 };
