@@ -1,13 +1,13 @@
 import {stringLiteral} from '@babel/types';
 
 //  not use
- function getDayNow(){
-      var dt=new Date();
-      let date= dt.getDate() <10 ?'0'+dt.getDate():dt.getDate();
-      // let monthReal=dt.getMonth() + 1
-      // let month=monthReal <10?'0'+monthReal:monthReal
-      // let year =dt.getFullYear()-2000
-      return (date)
+function getDayNow() {
+  var dt = new Date();
+  let date = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+  // let monthReal=dt.getMonth() + 1
+  // let month=monthReal <10?'0'+monthReal:monthReal
+  // let year =dt.getFullYear()-2000
+  return date;
 }
 // convert my data from server
 function dataConvertFromServer(dataServer) {
@@ -15,6 +15,7 @@ function dataConvertFromServer(dataServer) {
   let fullData = [];
   let listDay = [];
   Object.keys(dataServer).forEach(key => {
+    // console.log("TCL: dataConvertFromServer -> key", key)
     //    trong 1 ngay
     let fullDay = [];
     // console.log("TCL: dataConvertFromServer -> dataServer[key]", dataServer[key])
@@ -23,18 +24,20 @@ function dataConvertFromServer(dataServer) {
       Object.keys(dataServer[key]).forEach(keyInfor => {
         //    tat ca gio trong mot ngay
         // console.log(dataServer[key][keyInfor]);
-        let dd = getDateMonthYear(dataServer[key][keyInfor].timestamp);
-        let hh = dataServer[key][keyInfor].timestamp;
-        let lat = convertDeg(dataServer[key][keyInfor].locations[0]);
-        let long = convertDeg(dataServer[key][keyInfor].locations[1]);
-        let speed = dataServer[key][keyInfor].locations[2];
-        fullDay.push({
-          dd: dd,
-          hh: hh,
-          lat: lat,
-          long: long,
-          speed: speed,
-        });
+        if (keyInfor != 'adminSet') {
+          let dd = getDateMonthYear(dataServer[key][keyInfor].timestamp);
+          let hh = dataServer[key][keyInfor].timestamp;
+          let lat = convertDeg(dataServer[key][keyInfor].locations[0]);
+          let long = convertDeg(dataServer[key][keyInfor].locations[1]);
+          let speed = dataServer[key][keyInfor].locations[2];
+          fullDay.push({
+            dd: dd,
+            hh: hh,
+            lat: lat,
+            long: long,
+            speed: speed,
+          });
+        }
       });
       fullData.push(fullDay);
     }
@@ -208,7 +211,7 @@ function checkTimeNow(stamps) {
   }
 }
 function convertDistantV(input) {
-  let data= input;
+  let data = input;
   console.log('TCL: convertDistantV -> data', data);
   for (let i in data) {
     let index = Number(i);
@@ -450,39 +453,47 @@ function COnvertToPolyline(detail, data, kk) {
 }
 
 // [MapUser]
-function getDataGo(GoData){
-// console.log("TCL: getDataGo -> GoData", GoData)
+function getDataGo(GoData) {
+  // console.log("TCL: getDataGo -> GoData", GoData)
   // lay pointWay de hien thi duong di [array]
-  let steps=GoData.steps
+  let steps = GoData.steps;
   // console.log("TCL: getDataGo -> GoData.steps", GoData.steps)
-  let pointWay = []
-  for(let i in steps){
-    if(i==0){
-      pointWay.push({latitude:steps[i].start_location.lat,longitude:steps[i].start_location.lng})
-      pointWay.push({latitude:steps[i].end_location.lat,longitude:steps[i].end_location.lng})
-    }else{
-      pointWay.push({latitude:steps[i].end_location.lat,longitude:steps[i].end_location.lng})
+  let pointWay = [];
+  for (let i in steps) {
+    if (i == 0) {
+      pointWay.push({
+        latitude: steps[i].start_location.lat,
+        longitude: steps[i].start_location.lng,
+      });
+      pointWay.push({
+        latitude: steps[i].end_location.lat,
+        longitude: steps[i].end_location.lng,
+      });
+    } else {
+      pointWay.push({
+        latitude: steps[i].end_location.lat,
+        longitude: steps[i].end_location.lng,
+      });
     }
   }
   // co ket qua duong di
   // console.log("TCL: getDataGo -> pointWay", pointWay)
   //  lay pointInfor
-  let pointInfor={latitude:33.12,longitude:33.34}
-  if(pointWay.length>2){
-    pointInfor.latitude=pointWay[Math.floor(pointWay.length/2)].latitude
-    pointInfor.longitude=pointWay[Math.floor(pointWay.length/2)].longitude
+  let pointInfor = {latitude: 33.12, longitude: 33.34};
+  if (pointWay.length > 2) {
+    pointInfor.latitude = pointWay[Math.floor(pointWay.length / 2)].latitude;
+    pointInfor.longitude = pointWay[Math.floor(pointWay.length / 2)].longitude;
   }
-  return{
-    distance:GoData.distance.text,
-    duration:GoData.duration.text,
-    end_address:GoData.end_address,
-    end_location:GoData.end_location,
-    start_address:GoData.start_address,
-    start_location:GoData.start_location,
-    pointWay:pointWay,
-    pointInfor:pointInfor
-  }
-  
+  return {
+    distance: GoData.distance.text,
+    duration: GoData.duration.text,
+    end_address: GoData.end_address,
+    end_location: GoData.end_location,
+    start_address: GoData.start_address,
+    start_location: GoData.start_location,
+    pointWay: pointWay,
+    pointInfor: pointInfor,
+  };
 }
 export {
   dataConvertFromServer,
@@ -492,5 +503,5 @@ export {
   convertDistantV,
   getDataGo,
   getDayNow,
-  convertDeg
+  convertDeg,
 };

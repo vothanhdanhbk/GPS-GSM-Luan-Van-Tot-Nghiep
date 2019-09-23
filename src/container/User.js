@@ -62,7 +62,7 @@ class User extends Component {
           </View>
 
           <View style={styles.body}>
-            <MapUser />
+            <MapUser isAdmin={false}/>
           </View>
           {/* <View style={styles.footer}><Text>Footer</Text></View> */}
         </View>

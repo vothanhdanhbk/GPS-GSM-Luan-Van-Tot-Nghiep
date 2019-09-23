@@ -28,7 +28,7 @@ export default class ContainerMapDetail extends Component {
     let {chooseValue} = this.props;
     let result=null
     if(chooseValue==1){
-      result=<MapUser/>
+      result=<MapUser isAdmin={true}/>
     }else if(chooseValue==2){
       result= <Map data={data}/>
     }else if(chooseValue==3){

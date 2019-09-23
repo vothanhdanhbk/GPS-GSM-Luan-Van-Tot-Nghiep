@@ -88,7 +88,7 @@ export default class IconListHours extends Component {
     return (
       <Fragment>
         <View style={styles.listHoursContainer}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row',position:"relative"}}>
             <Text>Ngày giám sát :</Text>
             <TouchableOpacity onPress={this.onPressDay}>
               <View
@@ -108,6 +108,14 @@ export default class IconListHours extends Component {
                 />
               </View>
             </TouchableOpacity>
+            {this.state.selected==1&&(<View style={{
+              position:"absolute",
+              top:0,
+              left:0,
+              width:"90%",
+              height:20,
+              backgroundColor:"#B2A198"
+            }}></View>)}
           </View>
           <View style={{flexDirection: 'row',marginTop:6,paddingLeft:"12%"}}>
             <TouchableOpacity onPress={this.onTouchLocation}>

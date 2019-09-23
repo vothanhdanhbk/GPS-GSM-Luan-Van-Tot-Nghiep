@@ -374,12 +374,13 @@ class MapUser extends React.Component {
   //
   render() {
     let {dataGo, isShowPopUp, isTogleButtonSearch} = this.state;
+    let {isAdmin}=this.props
+
     // console.log('TCL: MapUser -> render -> dataGo', dataGo);
     let quangduong =
       dataGo.distance[0] + dataGo.distance[1] + dataGo.distance[2] + '';
     quangduong = Number(quangduong);
     let showPopUp = this.chechShowPopUp(isShowPopUp, dataGo, quangduong);
-
     return (
       // <Text>null</Text>
       <View style={styles.wapper}>
@@ -514,16 +515,16 @@ class MapUser extends React.Component {
 
         <View style={styles.buttonSearch}>
           <TouchableOpacity onPress={() => this.togleButtomSearch()}>
-            <Icon
+            {isAdmin&&(<Icon
               name={!isTogleButtonSearch ? 'add-circle' : 'remove-circle'}
               size={36}
               color="white"
-            />
-            {/* <Icon
+            />)}
+          {!isAdmin&&(  <Icon
               name="check"
               size={36}
               color="yellow"
-            /> */}
+            />)}
           </TouchableOpacity>
         </View>
       </View>
