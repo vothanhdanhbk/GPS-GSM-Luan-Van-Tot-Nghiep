@@ -111,10 +111,10 @@ export default class IconListHours extends Component {
             {this.state.selected==1&&(<View style={{
               position:"absolute",
               top:0,
-              left:0,
-              width:"90%",
+              left:-10,
+              width:"120%",
               height:20,
-              backgroundColor:"#B2A198"
+              backgroundColor:"#d6ceceb5"
             }}></View>)}
           </View>
           <View style={{flexDirection: 'row',marginTop:6,paddingLeft:"12%"}}>

@@ -58,7 +58,7 @@ class User extends Component {
         {/* <SafeAreaView style={styles.safeAreaView}> */}
         <View style={styles.container}>
           <View style={styles.header}>
-            <MyHeader />
+            <MyHeader isAdmin={false} onLogin={()=>this.props.onLogin("login")}/>
           </View>
 
           <View style={styles.body}>

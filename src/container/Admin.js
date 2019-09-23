@@ -120,7 +120,7 @@ class Admin extends Component {
         {/* <SafeAreaView style={styles.safeAreaView}> */}
           <View style={styles.container}>
             <View style={styles.header}>
-              <MyHeader />
+              <MyHeader isAdmin={true} onLogin={()=>this.props.onLogin("login")}/>
             </View>
 
             <View style={styles.body}>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   // Show menu
   footer: {
     flex: 4,
-    backgroundColor: '#B2A198',
+    backgroundColor: '#FF7F50',
   },
 });
 

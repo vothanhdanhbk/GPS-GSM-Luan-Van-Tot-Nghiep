@@ -62,6 +62,7 @@ class MapUser extends React.Component {
         message: '',
       },
       newLocaionState: ['', ''],
+      isCheckedComplete:false
     };
   }
   componentDidMount() {
@@ -353,6 +354,12 @@ class MapUser extends React.Component {
     this.sentDataToFireBase('', '');
     this.onCancel();
   };
+  checkComplete=()=>{
+    this.clearLocation();
+    this.setState({
+      isCheckedComplete:true
+    })
+  }
   //  gui data len fireBase
   sentDataToFireBase = (inputAdressValue, inputMessageValue) => {
     firebaseApp
@@ -520,12 +527,19 @@ class MapUser extends React.Component {
               size={36}
               color="white"
             />)}
-          {!isAdmin&&(  <Icon
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.checkComplete()}>
+          {!isAdmin&&this.state.isCheckedComplete&&(  <Icon
               name="check"
               size={36}
               color="yellow"
             />)}
-          </TouchableOpacity>
+          {!isAdmin&&!this.state.isCheckedComplete&&(  <Icon
+              name="check"
+              size={36}
+              color="white"
+            />)}
+            </TouchableOpacity>
         </View>
       </View>
     );

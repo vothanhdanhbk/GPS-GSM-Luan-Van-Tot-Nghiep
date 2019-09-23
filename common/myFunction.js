@@ -308,8 +308,8 @@ function convertDataToTimeList(data) {
             'start',
           )}
 `,
-          circleColor: '#e32e2b',
-          lineColor: '#e32e2b',
+          circleColor: '#DC143C',
+          lineColor: '#DC143C',
         });
       } else if (data[i].timeEnd == '23:59') {
         result.push({
@@ -320,13 +320,13 @@ function convertDataToTimeList(data) {
             'end',
           )}
 `,
-          circleColor: '#e32e2b',
-          lineColor: '#e32e2b',
+          circleColor: '#DC143C',
+          lineColor: '#DC143C',
         });
         result.push({
           time: '23:59',
           title: '',
-          circleColor: '#e32e2b',
+          circleColor: '#DC143C',
           lineColor: 'while',
         });
       } else {
@@ -338,8 +338,8 @@ function convertDataToTimeList(data) {
             'midble',
           )}
 `,
-          circleColor: '#e32e2b',
-          lineColor: '#e32e2b',
+          circleColor: '#DC143C',
+          lineColor: '#DC143C',
         });
       }
     } else {
@@ -352,8 +352,8 @@ function convertDataToTimeList(data) {
             data[i].detail,
           )}
 `,
-          circleColor: '#e6c949',
-          lineColor: '#e6c949',
+          circleColor: '#FFA500',
+          lineColor: '#FFA500',
         });
       } else {
         result.push({
