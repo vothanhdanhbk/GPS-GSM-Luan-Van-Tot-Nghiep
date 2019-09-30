@@ -40,7 +40,7 @@ export default class SignUpPage extends Component {
     };
   }
   componentWillMount() {
-    console.log('componentWillMount');
+    // console.log('componentWillMount');
   }
   _onPressLogin(event) {
     let {userName, password} = this.state;

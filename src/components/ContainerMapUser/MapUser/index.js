@@ -62,7 +62,7 @@ class MapUser extends React.Component {
         message: '',
       },
       newLocaionState: ['', ''],
-      isCheckedComplete:false
+      isCheckedComplete: false,
     };
   }
   componentDidMount() {
@@ -87,76 +87,87 @@ class MapUser extends React.Component {
         //   snapshot.val(),
         // );
         let dataServer = snapshot.val();
-        let arrayDataServer = [];
-        Object.keys(dataServer).forEach(key => {
-          arrayDataServer.push(key);
-        });
-        // console.log(
-        //   'TCL: MapUser -> componentDidMount -> arrayDataServer',
-        //   arrayDataServer,
-        // );
-        let adminSet = dataServer.adminSet;
-        let newLocaion = [
-          dataServer[arrayDataServer[arrayDataServer.length - 2]].locations[0],
-          dataServer[arrayDataServer[arrayDataServer.length - 2]].locations[1],
-        ];
-        // console.log(
-        //   'TCL: MapUser -> componentDidMount -> newLocaion',
-        //   newLocaion,
-        // );
-        //  co duoc yeu cau cua admin va vi tri moi nhat cua car roi gio xu ly thoi
-        let {adminSetState, newLocaionState} = this.state;
-        if (
-          newLocaionState[0] != newLocaion[0] ||
-          newLocaionState[1] != newLocaion[1]
-        ) {
-          this.setState({
-            newLocaionState: newLocaion,
+        // if (
+        //   (dataServer!= null) &&
+        //   Object.keys(dataServer).length > 1
+        // ) {
+          try{
+          let arrayDataServer = [];
+          Object.keys(dataServer).forEach(key => {
+            arrayDataServer.push(key);
           });
-        }
-        if (
-          adminSetState.location != adminSet.location ||
-          (adminSetState.location == adminSet.location &&
-            adminSetState.message != adminSet.message)
-        ) {
-          this.setState({
-            adminSetState: adminSet,
-          });
-          if (adminSet.location != '') {
-            this.getDirections(
-              convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
-              adminSet.location.replace(/ /g, '-'),
-            );
-            // console.log(
-            //   'TCL: MapUser -> componentDidMount -> newLocaion[0]+',
-            //   '+newLocaion[1]',
-            //   convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
-            // );
-            // console.log(
-            //   'TCL: MapUser -> componentDidMount -> adminSet.location',
-            //   adminSet.location.replace(/ /g, '-'),
-            // );
-          }else{
+
+          // console.log(
+          //   'TCL: MapUser -> componentDidMount -> arrayDataServer',
+          //   arrayDataServer,
+          // );
+          let adminSet = dataServer.adminSet;
+          let newLocaion = [
+            dataServer[arrayDataServer[arrayDataServer.length - 2]]
+              .locations[0],
+            dataServer[arrayDataServer[arrayDataServer.length - 2]]
+              .locations[1],
+          ];
+          // console.log(
+          //   'TCL: MapUser -> componentDidMount -> newLocaion',
+          //   newLocaion,
+          // );
+          //  co duoc yeu cau cua admin va vi tri moi nhat cua car roi gio xu ly thoi
+          let {adminSetState, newLocaionState} = this.state;
+          if (
+            newLocaionState[0] != newLocaion[0] ||
+            newLocaionState[1] != newLocaion[1]
+          ) {
             this.setState({
-              region: {
-                latitude: LATITUDE,
-                longitude: LONGITUDE,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              },
-              lineMap: '',
-              dataGo: {
-                pointWay: [],
-                start_location: {lat: 76.661599, lng: 105.710462},
-                end_location: {lat: 76.661599, lng: 105.710462},
-                pointInfor: {latitude: 76.661599, longitude: 105.710462},
-                start_address: '',
-                end_address: '',
-                distance: '',
-                duration: '',
-              },
-            })
+              newLocaionState: newLocaion,
+            });
           }
+          if (
+            adminSetState.location != adminSet.location ||
+            (adminSetState.location == adminSet.location &&
+              adminSetState.message != adminSet.message)
+          ) {
+            this.setState({
+              adminSetState: adminSet,
+            });
+            if (adminSet.location != '') {
+              this.getDirections(
+                convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
+                adminSet.location.replace(/ /g, '-'),
+              );
+              // console.log(
+              //   'TCL: MapUser -> componentDidMount -> newLocaion[0]+',
+              //   '+newLocaion[1]',
+              //   convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
+              // );
+              // console.log(
+              //   'TCL: MapUser -> componentDidMount -> adminSet.location',
+              //   adminSet.location.replace(/ /g, '-'),
+              // );
+            } else {
+              this.setState({
+                region: {
+                  latitude: LATITUDE,
+                  longitude: LONGITUDE,
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                },
+                lineMap: '',
+                dataGo: {
+                  pointWay: [],
+                  start_location: {lat: 76.661599, lng: 105.710462},
+                  end_location: {lat: 76.661599, lng: 105.710462},
+                  pointInfor: {latitude: 76.661599, longitude: 105.710462},
+                  start_address: '',
+                  end_address: '',
+                  distance: '',
+                  duration: '',
+                },
+              });
+            }
+          }
+        }catch(e){
+          alert("GSM-GPS không có kết nối")          
         }
       });
     // lang nghe admin yeu cau
@@ -354,12 +365,12 @@ class MapUser extends React.Component {
     this.sentDataToFireBase('', '');
     this.onCancel();
   };
-  checkComplete=()=>{
+  checkComplete = () => {
     this.clearLocation();
     this.setState({
-      isCheckedComplete:true
-    })
-  }
+      isCheckedComplete: true,
+    });
+  };
   //  gui data len fireBase
   sentDataToFireBase = (inputAdressValue, inputMessageValue) => {
     firebaseApp
@@ -381,7 +392,7 @@ class MapUser extends React.Component {
   //
   render() {
     let {dataGo, isShowPopUp, isTogleButtonSearch} = this.state;
-    let {isAdmin}=this.props
+    let {isAdmin} = this.props;
 
     // console.log('TCL: MapUser -> render -> dataGo', dataGo);
     let quangduong =
@@ -421,7 +432,7 @@ class MapUser extends React.Component {
           <Marker
             coordinate={{
               latitude: convertDeg(this.state.newLocaionState[0]),
-              longitude:convertDeg(this.state.newLocaionState[1]),
+              longitude: convertDeg(this.state.newLocaionState[1]),
             }}
             title={dataGo.start_address}
             image={car}></Marker>
@@ -522,24 +533,22 @@ class MapUser extends React.Component {
 
         <View style={styles.buttonSearch}>
           <TouchableOpacity onPress={() => this.togleButtomSearch()}>
-            {isAdmin&&(<Icon
-              name={!isTogleButtonSearch ? 'add-circle' : 'remove-circle'}
-              size={36}
-              color="white"
-            />)}
+            {isAdmin && (
+              <Icon
+                name={!isTogleButtonSearch ? 'add-circle' : 'remove-circle'}
+                size={36}
+                color="white"
+              />
+            )}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.checkComplete()}>
-          {!isAdmin&&this.state.isCheckedComplete&&(  <Icon
-              name="check"
-              size={36}
-              color="yellow"
-            />)}
-          {!isAdmin&&!this.state.isCheckedComplete&&(  <Icon
-              name="check"
-              size={36}
-              color="white"
-            />)}
-            </TouchableOpacity>
+            {!isAdmin && this.state.isCheckedComplete && (
+              <Icon name="check" size={36} color="yellow" />
+            )}
+            {!isAdmin && !this.state.isCheckedComplete && (
+              <Icon name="check" size={36} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     );

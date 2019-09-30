@@ -11,6 +11,7 @@ function getDayNow() {
 }
 // convert my data from server
 function dataConvertFromServer(dataServer) {
+  // console.log("TCL: dataConvertFromServer -> dataServer", dataServer)
   //   console.log(dataServer);
   let fullData = [];
   let listDay = [];
@@ -20,7 +21,7 @@ function dataConvertFromServer(dataServer) {
     let fullDay = [];
     // console.log("TCL: dataConvertFromServer -> dataServer[key]", dataServer[key])
 
-    if (key != 0) {
+    if (key != 0 && Object.keys(dataServer[key]).length > 1) {
       Object.keys(dataServer[key]).forEach(keyInfor => {
         //    tat ca gio trong mot ngay
         // console.log(dataServer[key][keyInfor]);
@@ -495,6 +496,51 @@ function getDataGo(GoData) {
     pointInfor: pointInfor,
   };
 }
+
+// xu ly  hien thi vi tri theo doi khi da chon gio
+function getPosition(data1, data2) {
+  // console.log('TCL: getPosition -> data2', data2);
+  // console.log('TCL: getPosition -> data1', data1);
+  let minTime = 1441; //gia tri thoi gian nho nhat (sau khi tru di data1)
+  let valueOfMinTime = {title:"",description:"",position:{latitude: 10.804366049999999, longitude: 106.63990885}};
+  try {
+    for (let i in data2) {
+      if (data2[i].title != 'Mất kết nối' && data2[i].title != '') {
+        let arrDetail = data2[i].detail;
+        //  duoi day la Dung hoac di chuyen ,ben trong no co 1 mang detail
+        for (let k in arrDetail) {
+          // lay du lieu ngay ra tinh
+          let timeInData2 = convertMinute(arrDetail[k].hh);
+          if (Math.abs(timeInData2 - data1) < minTime) {
+            // neu ma co cai nho hon thi lay cai nho do
+            minTime = Math.abs(timeInData2 - data1);
+            valueOfMinTime = {
+              title: data2[i].title,
+              description:data2[i].title=="Di chuyển"?`Di chuyển: ${data2[i].timeMove}`: data2[i].description,
+              position: {
+                latitude: arrDetail[k].lat,
+                longitude: arrDetail[k].long,
+              },
+            };
+          }
+        }
+      }
+    }
+
+    // xu ly neu minTime qua lon, co nghia la no bi mat ket noi
+    if(minTime>3){//no la mat ket noi
+      valueOfMinTime.title="Mất kết nối."
+      valueOfMinTime.description="Mất kế nối tại đây."
+    }
+    return valueOfMinTime
+  } catch (e) {
+    return valueOfMinTime
+  }
+}
+function convertMinute(time) {
+  let timeMinute = new Date(time);
+  return timeMinute.getHours() * 60 + timeMinute.getMinutes();
+}
 export {
   dataConvertFromServer,
   convertDataDetail,
@@ -504,4 +550,5 @@ export {
   getDataGo,
   getDayNow,
   convertDeg,
+  getPosition,
 };
