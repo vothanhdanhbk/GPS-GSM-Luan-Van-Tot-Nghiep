@@ -24,7 +24,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedPage: 'login',
+      selectedPage: 'admin',
     };
   }
   onLogin = value => {

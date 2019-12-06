@@ -3,10 +3,11 @@ import {stringLiteral} from '@babel/types';
 //  not use
 function getDayNow() {
   var dt = new Date();
-  let date = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+  let date = dt.getDate();
   // let monthReal=dt.getMonth() + 1
   // let month=monthReal <10?'0'+monthReal:monthReal
   // let year =dt.getFullYear()-2000
+  // alert(date)
   return date;
 }
 // convert my data from server
@@ -58,7 +59,7 @@ function dataConvertFromServer(dataServer) {
 function getDateMonthYear(timestamp) {
   let time = new Date(timestamp);
   let date = time.getDate();
-  let month = time.getMonth();
+  let month = time.getMonth()+1;
   let year = time.getFullYear();
   let dd = '';
   if (date < 10) dd += '0';

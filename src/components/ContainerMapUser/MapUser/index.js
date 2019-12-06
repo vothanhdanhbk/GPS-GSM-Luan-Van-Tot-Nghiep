@@ -63,131 +63,11 @@ class MapUser extends React.Component {
       },
       newLocaionState: ['', ''],
       isCheckedComplete: false,
+      control:"0"
     };
   }
   componentDidMount() {
-    // find your origin and destination point coordinates and pass it to our method.
-    // I am using Bursa,TR -> Istanbul,TR for this example
-    // this.getDirections(
-    //   ' 10.804366049999999, 106.63990885',
-    //   ' 10.804466049999999,106.64990885',
-    // );
-    // this.getDirections(
-    //   '34-nhat-chi-mai-quan-tan-binh-hcm',
-    //   'dai-hoc-bach-khoa-hcm-quan-10',
-    // );
-    //   lang nghe firebase voi du lieu ngay hien tai (ngay hom nay)
 
-    firebaseApp
-      .database()
-      .ref('data/' + getDayNow())
-      .on('value', snapshot => {
-        // console.log(
-        //   'TCL: MapUser -> componentDidMount -> snapshot.val(xxxxxxx)',
-        //   snapshot.val(),
-        // );
-        let dataServer = snapshot.val();
-        // if (
-        //   (dataServer!= null) &&
-        //   Object.keys(dataServer).length > 1
-        // ) {
-          try{
-          let arrayDataServer = [];
-          Object.keys(dataServer).forEach(key => {
-            arrayDataServer.push(key);
-          });
-
-          // console.log(
-          //   'TCL: MapUser -> componentDidMount -> arrayDataServer',
-          //   arrayDataServer,
-          // );
-          let adminSet = dataServer.adminSet;
-          let newLocaion = [
-            dataServer[arrayDataServer[arrayDataServer.length - 2]]
-              .locations[0],
-            dataServer[arrayDataServer[arrayDataServer.length - 2]]
-              .locations[1],
-          ];
-          // console.log(
-          //   'TCL: MapUser -> componentDidMount -> newLocaion',
-          //   newLocaion,
-          // );
-          //  co duoc yeu cau cua admin va vi tri moi nhat cua car roi gio xu ly thoi
-          let {adminSetState, newLocaionState} = this.state;
-          if (
-            newLocaionState[0] != newLocaion[0] ||
-            newLocaionState[1] != newLocaion[1]
-          ) {
-            this.setState({
-              newLocaionState: newLocaion,
-            });
-          }
-          if (
-            adminSetState.location != adminSet.location ||
-            (adminSetState.location == adminSet.location &&
-              adminSetState.message != adminSet.message)
-          ) {
-            this.setState({
-              adminSetState: adminSet,
-            });
-            if (adminSet.location != '') {
-              this.getDirections(
-                convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
-                adminSet.location.replace(/ /g, '-'),
-              );
-              // console.log(
-              //   'TCL: MapUser -> componentDidMount -> newLocaion[0]+',
-              //   '+newLocaion[1]',
-              //   convertDeg(newLocaion[0]) + ',' + convertDeg(newLocaion[1]),
-              // );
-              // console.log(
-              //   'TCL: MapUser -> componentDidMount -> adminSet.location',
-              //   adminSet.location.replace(/ /g, '-'),
-              // );
-            } else {
-              this.setState({
-                region: {
-                  latitude: LATITUDE,
-                  longitude: LONGITUDE,
-                  latitudeDelta: LATITUDE_DELTA,
-                  longitudeDelta: LONGITUDE_DELTA,
-                },
-                lineMap: '',
-                dataGo: {
-                  pointWay: [],
-                  start_location: {lat: 76.661599, lng: 105.710462},
-                  end_location: {lat: 76.661599, lng: 105.710462},
-                  pointInfor: {latitude: 76.661599, longitude: 105.710462},
-                  start_address: '',
-                  end_address: '',
-                  distance: '',
-                  duration: '',
-                },
-              });
-            }
-          }
-        }catch(e){
-          alert("GSM-GPS không có kết nối")          
-        }
-      });
-    // lang nghe admin yeu cau
-    // firebaseApp
-    //   .database()
-    //   .ref('data/' + getDayNow() + '/adminSet')
-    //   .on('value', snapshot => {
-    //     if (snapshot.val().location != '') {
-    //       // alert(snapshot.val().location);
-    //       console.log(
-    //         'TCL: MapUser -> componentDidMount -> snapshot.val().location',
-    //         snapshot.val().location,
-    //       );
-    //       // alert(snapshot.val().message);
-    //       console.log(
-    //         'TCL: MapUser -> componentDidMount -> snapshot.val().message',
-    //         snapshot.val().message,
-    //       );
-    //     }
-    //   });
   }
 
   async getDirections(startLoc, destinationLoc) {
@@ -381,6 +261,8 @@ class MapUser extends React.Component {
         message: inputMessageValue,
       });
   };
+
+
   // cancel
   onCancel = () => {
     this.setState({
@@ -550,6 +432,7 @@ class MapUser extends React.Component {
             )}
           </TouchableOpacity>
         </View>
+
       </View>
     );
   }
@@ -621,6 +504,19 @@ const styles = StyleSheet.create({
     padding: 2,
     borderRadius: 5,
   },
+  buttonControl:{
+    position: 'absolute',
+    bottom: '35%',
+    right: 20,
+
+  },
+  buttonText:{
+    width: 45,
+    paddingVertical:4,
+    backgroundColor: '#ffa451de',
+    borderRadius:4,
+    textAlign:"center",
+  }
 });
 
 export default MapUser;
