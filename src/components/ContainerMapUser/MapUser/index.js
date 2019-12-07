@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Picker,
 } from 'react-native';
 import {Icon, Button} from 'react-native-elements';
 import MapView, {Marker, Polyline, ProviderPropType} from 'react-native-maps';
@@ -15,9 +16,11 @@ import {
   getDataGo,
   getDayNow,
   convertDeg,
+  convertLichSu
 } from './../../../../common/myFunction';
-import car from './assets/car.png';
-import finish from './assets/finish.png';
+import finish from './assets/car.png';
+import flag from './assets/flag-blue.png';
+import flagP from './assets/flag-pink.png';
 const {width, height} = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
@@ -39,248 +42,143 @@ class MapUser extends React.Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      lineMap: '',
-      dataGo: {
-        pointWay: [],
-        start_location: {lat: 76.661599, lng: 105.710462},
-        end_location: {lat: 76.661599, lng: 105.710462},
-        pointInfor: {latitude: 76.661599, longitude: 105.710462},
-        start_address: '',
-        end_address: '',
-        distance: '',
-        duration: '',
+      vtri:{lat:10.804366049999999,long:106.63990885},
+      isTogleButtonSearch:false,
+      sdt:"",
+      lichSu:{},
+      ngay_chon:"",
+      valueLichSu:{
+        list:null,
+        data:null
       },
-      isShowPopUp: false,
-      iconSelected: 2,
-      xangX: motoX,
-      isTogleButtonSearch: false,
-      inputAdressValue: '',
-      inputMessageValue: '',
-      //
-      adminSetState: {
-        location: '',
-        message: '',
-      },
-      newLocaionState: ['', ''],
-      isCheckedComplete: false,
-      control:"0"
+      name:""
     };
+    this.listUser=[];
+
   }
   componentDidMount() {
-
+    firebaseApp
+    .database()
+    .ref('rifd/vtri')
+    .on('value', snapshot => {
+      this.setState({
+        vtri:snapshot.val(),
+      });
+    });
+    firebaseApp
+    .database()
+    .ref('rifd/user')
+    .once('value', snapshot => {
+      this.listUser=snapshot.val();
+    });
   }
-
-  async getDirections(startLoc, destinationLoc) {
-    try {
-      let resp = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${destinationLoc}&key=AIzaSyDhPujSPGQEPULDAKE1z8HYsScYlq1F4ZA`,
-      );
-      let respJson = await resp.json();
-      if (respJson.status != 'NOT_FOUND') {
-        // console.log("TCL: MapUser -> getDirections -> respJson", respJson.routes[0].legs[0])
-        let dataGo = getDataGo(respJson.routes[0].legs[0]);
-        // console.log("TCL: MapUser -> getDirections -> dataGo", dataGo)
-        this.setState({
-          region: {
-            latitude: dataGo.pointWay[0].latitude,
-            longitude: dataGo.pointWay[0].longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-          },
-          dataGo: dataGo,
-        });
-      } else {
-        alert('không tìm thấy địa chỉ trên trên bản đồ');
-      }
-    } catch (error) {
-      this.props.onSent('', '');
-      alert(error);
-      return error;
-    }
-  }
-  //
-  showInfor = () => {
-    this.setState({
-      isShowPopUp: !this.state.isShowPopUp,
-    });
-  };
-  //
-  // set icon
-  setIcon = (iconSelected, xangX) => {
-    this.setState({
-      iconSelected: iconSelected,
-      xangX: xangX,
-    });
-  };
-  //  close popup
-  closePopUp = () => {
-    this.setState({
-      isShowPopUp: false,
-    });
-  };
   // button search
   togleButtomSearch = () => {
     this.setState({
       isTogleButtonSearch: !this.state.isTogleButtonSearch,
-      inputAdressValue: '',
-      inputMessageValue: '',
+ 
+      
     });
   };
-
-  chechShowPopUp = (isShowPopUp, dataGo, quangduong) => {
-    let result = null;
-    if (isShowPopUp) {
-      result = (
-        <View style={[styles.popUp]}>
-          <Text style={[styles.pupUpText, {paddingTop: 3}]}>
-            Quãng đường đi:
-            <Text style={{color: '#d41919d6'}}>
-              {dataGo.distance} {`             `}
-            </Text>
-            Thời gian đi:
-            <Text style={{color: '#d41919d6'}}> {dataGo.duration}</Text>
-          </Text>
-          <Text style={styles.pupUpText}>
-            Lượng xăng tiêu thụ :
-            <Text style={{color: '#d41919d6'}}>
-              {(quangduong * this.state.xangX).toFixed(1)} (lit)
-            </Text>
-          </Text>
-          <Text style={styles.pupUpText}>
-            Vị trí cần đến :{' '}
-            <Text style={{color: '#d41919d6'}}>{dataGo.end_address}</Text>
-          </Text>
-          <Text style={styles.pupUpText}>
-            Lời nhắn :{' '}
-            <Text style={{color: '#d41919d6'}}>
-              {this.state.adminSetState.message}
-            </Text>
-          </Text>
-
-          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-            <TouchableOpacity
-              onPress={() => this.setIcon(1, otoX)}
-              style={{marginLeft: '25%'}}>
-              <Icon
-                name="directions-car"
-                containerStyle={[
-                  styles.icon,
-                  this.state.iconSelected == 1 ? {borderWidth: 2} : {},
-                ]}
-                iconStyle={[
-                  this.state.iconSelected == 1
-                    ? {color: '#3f6eb7'}
-                    : {color: '#6b6666'},
-                ]}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.setIcon(2, motoX)}>
-              <Icon
-                name="motorcycle"
-                containerStyle={[
-                  styles.icon,
-                  this.state.iconSelected == 2 ? {borderWidth: 2} : {},
-                ]}
-                iconStyle={[
-                  this.state.iconSelected == 2
-                    ? {color: '#3f6eb7'}
-                    : {color: '#6b6666'},
-                ]}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.setIcon(3, truckX)}>
-              <Icon
-                name="truck"
-                type="font-awesome"
-                iconStyle={[
-                  {transform: [{rotateY: '180deg'}]},
-                  [
-                    this.state.iconSelected == 3
-                      ? {color: '#3f6eb7'}
-                      : {color: '#6b6666'},
-                  ],
-                ]}
-                containerStyle={[
-                  styles.icon,
-                  this.state.iconSelected == 3 ? {borderWidth: 2} : {},
-                ]}
-              />
-            </TouchableOpacity>
-            <View style={styles.close}>
-              <TouchableOpacity onPress={() => this.closePopUp()}>
-                <Icon name="close"></Icon>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      );
-    }
-    return result;
-  };
-  //  input adresss
-  onChangeInputAdressValue = text => {
-    this.setState({
-      inputAdressValue: text,
-    });
-  };
-  //  input adresss
-  onChangeInputMessageValue = text => {
-    this.setState({
-      inputMessageValue: text,
-    });
-  };
-  // sendt
-  onSent = () => {
-    let {inputMessageValue, inputAdressValue} = this.state;
-    if (inputAdressValue == '') {
-      alert('Vui lòng nhập địa chỉ cần đến .');
-    } else {
-      // alert(inputAdressValue+" --- "+inputMessageValue)
-      this.sentDataToFireBase(inputAdressValue, inputMessageValue);
-      this.onCancel();
-    }
-  };
-  // clear
-  clearLocation = () => {
-    this.sentDataToFireBase('', '');
-    this.onCancel();
-  };
-  checkComplete = () => {
-    this.clearLocation();
-    this.setState({
-      isCheckedComplete: true,
-    });
-  };
-  //  gui data len fireBase
-  sentDataToFireBase = (inputAdressValue, inputMessageValue) => {
-    firebaseApp
-      .database()
-      .ref('data/' + getDayNow() + '/adminSet')
-      .set({
-        location: inputAdressValue,
-        message: inputMessageValue,
-      });
-  };
-
-
   // cancel
   onCancel = () => {
     this.setState({
       isTogleButtonSearch: false,
-      inputAdressValue: '',
-      inputMessageValue: '',
+      sdt: '',
+      ngay_chon:"",
+      valueLichSu:{
+        list:null,
+        data:null
+      }
     });
   };
-  //
-  render() {
-    let {dataGo, isShowPopUp, isTogleButtonSearch} = this.state;
-    let {isAdmin} = this.props;
+  //Ok
+  onOk=()=>{
+    let {sdt}=this.state;
+    let listUser=this.listUser
+    if(sdt !=""){
+      let check=false;
+      for(let i in listUser){
+        if(sdt == listUser[i].sdt){
+         // alert(listUser[i].id) // co duoc id roi ; gio get data
+          firebaseApp
+          .database()
+          .ref('rifd/lichSu/'+listUser[i].id)
+          .once('value', snapshot => {
+            let valueLichSu=convertLichSu(snapshot.val());
+            ngay_chon=valueLichSu.list!=null&&valueLichSu.list!=undefined?valueLichSu.list[0]:""
+            this.setState({
+              valueLichSu:valueLichSu,
+              ngay_chon:ngay_chon,
+              name:listUser[i].name
+            })//=snapshot.val();
+          });
 
-    // console.log('TCL: MapUser -> render -> dataGo', dataGo);
-    let quangduong =
-      dataGo.distance[0] + dataGo.distance[1] + dataGo.distance[2] + '';
-    quangduong = Number(quangduong);
-    let showPopUp = this.chechShowPopUp(isShowPopUp, dataGo, quangduong);
+          check=true
+        }
+      }
+      if(!check) alert("Số điện thoại không chính xác")
+    }else{
+      alert("Xin nhập số điện thoại")
+    }
+  }
+  //
+  showSelecte=(list)=>{
+    if(list !=null){
+      let kq=[]
+      for(let i in list){
+        kq.push(<Picker.Item label={list[i]} value={list[i]} key={i} />)
+      }
+      return<View>
+        <Text>Chọn ngày:</Text>
+        <Picker
+        selectedValue={this.state.ngay_chon}
+        style={{height: 50, width: 300}}
+        onValueChange={(itemValue, itemIndex) =>{
+          this.setState({ngay_chon: itemValue})
+
+        }
+        }>
+        {kq}
+      </Picker>
+    </View>
+    }
+  }
+  showPointMap=(ngay_chon,data,list)=>{
+    let showMaker=[]
+    if(ngay_chon!=""){
+      for(let i in list){
+        if(list[i]==ngay_chon){
+          //hien thi list Maket
+          for(let k in data[i]){
+              showMaker.push(     
+                  <Marker
+                  key={k}
+                    coordinate={{
+                      latitude: data[i][k].vtri.lat,
+                      longitude: data[i][k].vtri.long,
+                    }}
+                    title={this.state.name}
+                    description={data[i][k].isGoUp?"Lên xe":"Xuống xe"}
+                    // image={finish}
+                  >
+                    <Image
+                      style={{width: 20, height: 20, opacity: 0.8}}
+                      source={data[i][k].isGoUp?flag:flagP}
+                    />
+           <Text style={styles.text}>{data[i][k].time}</Text>
+
+                  </Marker>
+              )
+          }
+        }
+      }
+    }
+    return showMaker
+  }
+  render() {
+    let { vtri, isTogleButtonSearch,ngay_chon,valueLichSu,name} = this.state;
+    let {isAdmin} = this.props;
     return (
       // <Text>null</Text>
       <View style={styles.wapper}>
@@ -289,53 +187,29 @@ class MapUser extends React.Component {
           style={styles.container}
           initialRegion={this.state.region}
           mapType={'standard'}>
-          {/*  duong di */}
-          <Polyline
-            coordinates={dataGo.pointWay}
-            strokeColor="#0e3ec7d6"
-            strokeWidth={4}
-          />
-          {/* hien thi diem Ket thuc */}
+
+         {/* hien thi vi tri hien tai */}
           <Marker
             coordinate={{
-              latitude: dataGo.end_location.lat,
-              longitude: dataGo.end_location.lng,
+              latitude: convertDeg(vtri.lat),
+              longitude: convertDeg(vtri.long),
             }}
-            title={dataGo.end_address}
+            title={"Xe buyt"}
             // description={"description"}
             // image={finish}
           >
             <Image
-              style={{width: 35, height: 35, opacity: 0.8}}
+              style={{width: 20, height: 20, opacity: 0.8}}
               source={finish}
             />
           </Marker>
-          {/* hien thi diem bat dau */}
-          <Marker
-            coordinate={{
-              latitude: convertDeg(this.state.newLocaionState[0]),
-              longitude: convertDeg(this.state.newLocaionState[1]),
-            }}
-            title={dataGo.start_address}
-            image={car}></Marker>
-          {/* hien thi thong tin */}
-          <Marker
-            coordinate={{
-              latitude: dataGo.pointInfor.latitude,
-              longitude: dataGo.pointInfor.longitude,
-            }}
-            // title={`Quãng đường sẽ đi: ${dataGo.distance}`}
-            // description={`Thời gian ước tính : ${dataGo.duration}`}
-            onPress={this.showInfor}>
-            <Text style={styles.text}>[...]</Text>
-          </Marker>
+            {this.showPointMap(ngay_chon,valueLichSu.data,valueLichSu.list)}
         </MapView>
-        {showPopUp}
-        {/* input search location */}
         {isTogleButtonSearch && (
           <View style={styles.search}>
             <View style={styles.iputAdress}>
-              <Text>Nhập địa chỉ cần đến :</Text>
+        <Text>Nhập số điện thoại của phụ huynh :</Text>
+        <Text style={{color:"red"}}>{this.state.name}</Text>
               <View
                 style={{
                   backgroundColor: 'white',
@@ -349,67 +223,45 @@ class MapUser extends React.Component {
                     borderWidth: 1,
                     padding: 0,
                   }}
-                  placeholder={'Nhập địa chỉ'}
-                  onChangeText={text => this.onChangeInputAdressValue(text)}
-                  value={this.state.inputAdressValue}
+                  placeholder={'Nhập số điện thoại'}
+                  onChangeText={text => this.setState({sdt:text})}
+                  value={this.state.sdt}
                 />
               </View>
             </View>
-            <View>
-              <Text>Nhập lời nhắn :</Text>
-              <View
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 5,
-                  marginTop: 3,
-                }}>
-                <TextInput
-                  style={{
-                    height: 80,
-                    borderColor: 'gray',
-                    borderWidth: 1,
-                    padding: 0,
-                  }}
-                  placeholder={'Nhập lời nhắn tại đây'}
-                  multiline={true}
-                  onChangeText={text => this.onChangeInputMessageValue(text)}
-                  value={this.state.inputMessageValue}
-                />
-              </View>
+
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
                   marginVertical: 10,
                 }}>
+
                 <Button
-                  title="Hủy"
-                  containerStyle={{width: 80}}
-                  buttonStyle={{
-                    backgroundColor: 'red',
-                    padding: 3,
-                  }}
-                  onPress={this.onCancel}
-                />
-                <Button
-                  title="Gửi"
+                  title="Tìm"
                   containerStyle={{width: 80}}
                   buttonStyle={{
                     backgroundColor: 'green',
                     padding: 3,
-                    marginLeft: 148,
-                    width: 80,
-                    marginTop: 2,
+                   
                   }}
-                  onPress={this.onSent}
+                  onPress={this.onOk}
                 />
-              </View>
-              <TouchableOpacity onPress={this.clearLocation}>
-                <Text style={{color: 'red', textDecorationLine: 'underline'}}>
-                  Xóa điểm hiện tại trên bản đồ
-                </Text>
-              </TouchableOpacity>
+                  <Button
+                  title="Hủy"
+                  containerStyle={{width: 80}}
+                  buttonStyle={{
+                    backgroundColor: 'red',
+                    padding: 3, 
+                    marginLeft:5
+                  }}
+                  onPress={this.onCancel}
+                />
+                
+                
             </View>
+            {this.showSelecte(valueLichSu.list)}
+
           </View>
         )}
 
@@ -423,14 +275,7 @@ class MapUser extends React.Component {
               />
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.checkComplete()}>
-            {!isAdmin && this.state.isCheckedComplete && (
-              <Icon name="check" size={36} color="yellow" />
-            )}
-            {!isAdmin && !this.state.isCheckedComplete && (
-              <Icon name="check" size={36} color="white" />
-            )}
-          </TouchableOpacity>
+         
         </View>
 
       </View>

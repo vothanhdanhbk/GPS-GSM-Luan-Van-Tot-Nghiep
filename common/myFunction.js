@@ -542,6 +542,38 @@ function convertMinute(time) {
   let timeMinute = new Date(time);
   return timeMinute.getHours() * 60 + timeMinute.getMinutes();
 }
+function convertLichSu(lichsu){
+  let list=[],lichsuList=[];
+  Object.keys(lichsu).forEach(key => {
+    list.push(key);
+    tungNgay=[]
+    Object.keys(lichsu[key]).forEach(key2 => {
+      if(lichsu[key][key2].vtri.lat!=undefined){
+      tungNgay.push({
+        isGoUp:lichsu[key][key2].isGoUp,
+        time:lichsu[key][key2].time,
+        vtri:{
+          lat:convertDeg(lichsu[key][key2].vtri.lat),
+          long:convertDeg(lichsu[key][key2].vtri.long)
+        }
+      })
+    }
+    })
+    lichsuList.push(tungNgay)
+
+  })
+  if(list[0] != undefined && list[0] !=null){
+  return {list:list,data:lichsuList}
+  }else{
+    return{list:null,data:null}
+  }
+}
+
+
+
+
+
+
 export {
   dataConvertFromServer,
   convertDataDetail,
@@ -552,4 +584,5 @@ export {
   getDayNow,
   convertDeg,
   getPosition,
+  convertLichSu
 };
